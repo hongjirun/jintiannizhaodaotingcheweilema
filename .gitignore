@@ -1,0 +1,9 @@
+node_modules/
+dist/
+.env
+*.log
+unpackage/
+miniapp/unpackage/
+miniapp/dist/
+server/dist/
+admin-web/dist/

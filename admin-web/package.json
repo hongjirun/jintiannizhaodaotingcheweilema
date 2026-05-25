@@ -1,0 +1,24 @@
+{
+  "name": "parking-admin",
+  "version": "1.0.0",
+  "scripts": {
+    "dev": "vite",
+    "build": "vite build",
+    "preview": "vite preview"
+  },
+  "dependencies": {
+    "vue": "^3.3.0",
+    "vue-router": "^4.2.0",
+    "pinia": "^2.1.0",
+    "axios": "^1.4.0",
+    "ant-design-vue": "^4.0.0",
+    "@ant-design/icons-vue": "^7.0.0",
+    "xlsx": "^0.18.5",
+    "dayjs": "^1.11.0"
+  },
+  "devDependencies": {
+    "@vitejs/plugin-vue": "^4.2.0",
+    "vite": "^4.4.0",
+    "less": "^4.1.3"
+  }
+}

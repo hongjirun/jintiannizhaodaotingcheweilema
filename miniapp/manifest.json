@@ -1,0 +1,22 @@
+{
+  "name": "今天你找到停车位了吗",
+  "appid": "wx4afb276c24150291",
+  "description": "全国停车场地图查询",
+  "versionName": "1.0.0",
+  "versionCode": "100",
+  "transformPx": false,
+  "vueVersion": "3",
+  "mp-weixin": {
+    "appid": "wx4afb276c24150291",
+    "setting": {
+      "urlCheck": false
+    },
+    "usingComponents": true,
+    "permission": {
+      "scope.userLocation": {
+        "desc": "获取您的位置，用于查找附近停车场"
+      }
+    },
+    "requiredPrivateInfos": ["getLocation", "chooseLocation"]
+  }
+}

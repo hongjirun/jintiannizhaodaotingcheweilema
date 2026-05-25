@@ -1,0 +1,22 @@
+{
+  "name": "parking-miniapp",
+  "version": "1.0.0",
+  "scripts": {
+    "build:mp-weixin": "uni build -p mp-weixin"
+  },
+  "dependencies": {
+    "@dcloudio/uni-app": "3.0.0-alpha-5010120260519001",
+    "@dcloudio/uni-components": "3.0.0-alpha-5010120260519001",
+    "@dcloudio/uni-mp-weixin": "3.0.0-alpha-5010120260519001",
+    "@dcloudio/vue-cli-plugin-uni": "^2.0.2-5000720260410001",
+    "@vue/cli-service": "^5.0.9",
+    "pinia": "^2.1.0",
+    "vue": "^3.3.4"
+  },
+  "devDependencies": {
+    "@dcloudio/uni-cli-shared": "3.0.0-alpha-5010120260519001",
+    "@dcloudio/vite-plugin-uni": "3.0.0-alpha-5010120260519001",
+    "@vitejs/plugin-vue": "^4.3.4",
+    "vite": "^4.4.9"
+  }
+}
