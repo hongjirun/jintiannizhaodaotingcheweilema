@@ -36,4 +36,14 @@ export const parkingRequest = {
     request({ url: `/parking/search?keyword=${encodeURIComponent(keyword)}&city=${encodeURIComponent(city)}` }),
   getDetail: (id) =>
     request({ url: `/parking/${id}` }),
+
+  // 免费停车点位上报
+  createReport: (data) =>
+    request({ url: '/free-parking/report', method: 'POST', data }),
+  checkReportEnabled: () =>
+    request({ url: '/free-parking/check-enabled' }),
+  getApprovedFreeParking: (bounds) => {
+    const params = bounds ? `?sw_lat=${bounds.sw_lat}&sw_lng=${bounds.sw_lng}&ne_lat=${bounds.ne_lat}&ne_lng=${bounds.ne_lng}` : ''
+    return request({ url: `/free-parking/approved${params}` })
+  },
 }

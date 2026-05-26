@@ -27,6 +27,17 @@
     </view>
 
     <view class="section">
+      <view class="section-title">功能服务</view>
+      <view class="menu-list">
+        <view class="menu-item" @tap="goToReport">
+          <text class="menu-icon">🅿️</text>
+          <text class="menu-label">免费停车点位上报</text>
+          <text class="menu-arrow">›</text>
+        </view>
+      </view>
+    </view>
+
+    <view class="section">
       <view class="section-title">关于应用</view>
       <view class="menu-list">
         <view class="menu-item">
@@ -37,11 +48,6 @@
         <view class="menu-item" @tap="showAbout">
           <text class="menu-icon">ℹ️</text>
           <text class="menu-label">关于我们</text>
-          <text class="menu-arrow">›</text>
-        </view>
-        <view class="menu-item" @tap="feedback">
-          <text class="menu-icon">💬</text>
-          <text class="menu-label">意见反馈</text>
           <text class="menu-arrow">›</text>
         </view>
       </view>
@@ -65,8 +71,8 @@ function showAbout() {
   })
 }
 
-function feedback() {
-  uni.showToast({ title: '感谢您的反馈', icon: 'none' })
+function goToReport() {
+  uni.navigateTo({ url: '/pages/report/index' })
 }
 </script>
 

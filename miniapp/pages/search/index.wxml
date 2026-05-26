@@ -1,0 +1,74 @@
+<view class="page">
+  <!-- 搜索栏 -->
+  <view class="search-bar">
+    <view class="input-wrap">
+      <text class="search-icon">搜</text>
+      <input
+        value="{{keyword}}"
+        placeholder="输入停车场名称或地址"
+        class="input"
+        confirm-type="search"
+        bindconfirm="doSearch"
+        bindinput="onInput"
+        focus="{{true}}"
+      />
+      <text wx:if="{{keyword}}" class="clear-btn" bindtap="clearKeyword">×</text>
+    </view>
+    <text class="search-submit-btn" bindtap="doSearch">搜索</text>
+    <text class="cancel-btn" bindtap="goBack">取消</text>
+  </view>
+
+  <!-- 加载中 -->
+  <view wx:if="{{loading}}" class="state-wrap">
+    <text class="state-icon">加载</text>
+    <text class="state-text">搜索中...</text>
+  </view>
+
+  <!-- 空结果 -->
+  <view wx:elif="{{searched && list.length === 0}}" class="state-wrap">
+    <text class="state-icon">P</text>
+    <text class="state-title">未找到停车场</text>
+    <text class="state-sub">换个关键词试试，如「北京西站停车场」</text>
+  </view>
+
+  <!-- 初始未搜索 -->
+  <view wx:elif="{{!searched && !loading}}" class="state-wrap">
+    <text class="state-icon">地图</text>
+    <text class="state-title">搜索附近停车场</text>
+    <text class="state-sub">输入停车场名称、地址或城市</text>
+  </view>
+
+  <!-- 搜索结果列表 -->
+  <scroll-view wx:else scroll-y class="result-list">
+    <view class="result-header">
+      <text class="result-count">共找到 {{list.length}} 个结果</text>
+    </view>
+    <view
+      wx:for="{{list}}"
+      wx:key="id"
+      class="result-item"
+      bindtap="goMap"
+      data-item="{{item}}"
+    >
+      <view class="item-left">
+        <view class="item-icon-wrap">
+          <text class="item-icon">P</text>
+        </view>
+      </view>
+      <view class="item-body">
+        <text class="item-name">{{item.name}}</text>
+        <text class="item-addr">{{item.address || item.city || '暂无地址'}}</text>
+        <view class="item-tags">
+          <view wx:if="{{item.city}}" class="tag tag-city">{{item.city}}</view>
+        </view>
+      </view>
+      <view class="item-right">
+        <view class="navi-btn" catchtap="navi" data-item="{{item}}">
+          <text class="navi-icon">导航</text>
+          <text class="navi-text">导航</text>
+        </view>
+      </view>
+    </view>
+    <view class="list-bottom-pad"></view>
+  </scroll-view>
+</view>

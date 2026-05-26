@@ -19,6 +19,10 @@
           <template #icon><EnvironmentOutlined /></template>
           停车场管理
         </a-menu-item>
+        <a-menu-item key="/free-parking">
+          <template #icon><GiftOutlined /></template>
+          免费点位审核
+        </a-menu-item>
       </a-menu>
     </a-layout-sider>
 
@@ -48,7 +52,7 @@
 import { ref, watch } from 'vue'
 import { useRouter, useRoute } from 'vue-router'
 import {
-  DashboardOutlined, EnvironmentOutlined,
+  DashboardOutlined, EnvironmentOutlined, GiftOutlined,
   UserOutlined, DownOutlined,
 } from '@ant-design/icons-vue'
 

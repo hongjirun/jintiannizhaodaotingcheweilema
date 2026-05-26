@@ -1,9 +1,9 @@
 // 线上服务器地址（HTTPS）
 const BASE_URL = 'https://parking.xianshihuodong.xyz/api'
 
-export function request(options) {
+function request(options) {
   return new Promise((resolve, reject) => {
-    uni.request({
+    wx.request({
       url: BASE_URL + options.url,
       method: options.method || 'GET',
       data: options.data || {},
@@ -15,19 +15,19 @@ export function request(options) {
         if (res.statusCode === 200) {
           resolve(res.data)
         } else {
-          uni.showToast({ title: '网络错误', icon: 'none' })
+          wx.showToast({ title: '网络错误', icon: 'none' })
           reject(res)
         }
       },
       fail: (err) => {
-        uni.showToast({ title: '网络连接失败', icon: 'none' })
+        wx.showToast({ title: '网络连接失败', icon: 'none' })
         reject(err)
       },
     })
   })
 }
 
-export const parkingRequest = {
+const parkingRequest = {
   getByBounds: (swLat, swLng, neLat, neLng) =>
     request({ url: `/parking/bounds?sw_lat=${swLat}&sw_lng=${swLng}&ne_lat=${neLat}&ne_lng=${neLng}` }),
   getNearby: (lat, lng, radius = 5000) =>
@@ -36,4 +36,11 @@ export const parkingRequest = {
     request({ url: `/parking/search?keyword=${encodeURIComponent(keyword)}&city=${encodeURIComponent(city)}` }),
   getDetail: (id) =>
     request({ url: `/parking/${id}` }),
+  createReport: (data) =>
+    request({ url: '/free-parking/report', method: 'POST', data }),
+}
+
+module.exports = {
+  request,
+  parkingRequest
 }

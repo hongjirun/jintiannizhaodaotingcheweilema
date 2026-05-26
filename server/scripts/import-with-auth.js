@@ -1,20 +1,17 @@
 /**
- * 全国主要城市停车场批量导入脚本
- * 用法：先获取 JWT token，然后运行：
- *   node scripts/import-all-cities.js <token>
+ * 全国主要城市停车场批量导入脚本（带自动登录）
+ * 用法：node scripts/import-with-auth.js
  */
 const https = require('https')
 const http = require('http')
 
-const API_BASE = 'https://api.xianshihuodong.xyz/api'
-const TOKEN = process.argv[2]
+const API_BASE = 'https://parking.xianshihuodong.xyz/api'
 
-if (!TOKEN) {
-  console.error('用法: node scripts/import-all-cities.js <JWT_TOKEN>')
-  console.error('先调用 POST /api/admin/login 获取 token')
-  process.exit(1)
-}
+// 管理员账号密码（从命令行参数获取，默认为 admin/admin123456）
+const ADMIN_USER = process.argv[2] || 'admin'
+const ADMIN_PASS = process.argv[3] || 'admin123456'
 
+// 全国城市列表（按优先级排序）
 const CITIES = [
   // 直辖市
   '北京', '上海', '天津', '重庆',
@@ -47,7 +44,7 @@ function apiRequest(method, path, body, token) {
       method,
       headers: {
         'Content-Type': 'application/json',
-        'Authorization': `Bearer ${token}`,
+        ...(token ? { 'Authorization': `Bearer ${token}` } : {}),
         ...(data ? { 'Content-Length': Buffer.byteLength(data) } : {}),
       },
       timeout: 60000,
@@ -66,10 +63,25 @@ function apiRequest(method, path, body, token) {
   })
 }
 
+async function login() {
+  console.log('正在登录获取 token...')
+  const res = await apiRequest('POST', '/admin/login', { username: ADMIN_USER, password: ADMIN_PASS })
+  if (res.code !== 0 || !res.data?.token) {
+    throw new Error('登录失败: ' + (res.message || '未知错误'))
+  }
+  console.log('✓ 登录成功')
+  return res.data.token
+}
+
 function sleep(ms) { return new Promise(r => setTimeout(r, ms)) }
 
 async function main() {
   console.log(`开始导入 ${CITIES.length} 个城市的停车场数据...`)
+  console.log('API地址:', API_BASE)
+  
+  // 登录获取 token
+  const token = await login()
+  
   let total = 0
   let failed = []
 
@@ -77,7 +89,7 @@ async function main() {
     const city = CITIES[i]
     process.stdout.write(`[${i+1}/${CITIES.length}] ${city} ... `)
     try {
-      const res = await apiRequest('POST', '/admin/parking/import/poi', { city }, TOKEN)
+      const res = await apiRequest('POST', '/admin/parking/import/poi', { city }, token)
       const count = res.message?.match(/(\d+)/)?.[1] || '?'
       console.log(`✓ 导入 ${count} 条`)
       total += parseInt(count) || 0
@@ -85,8 +97,8 @@ async function main() {
       console.log(`✗ 失败: ${e.message}`)
       failed.push(city)
     }
-    // 避免频率限制，每个城市间隔2秒
-    if (i < CITIES.length - 1) await sleep(2000)
+    // 避免频率限制，每个城市间隔3秒
+    if (i < CITIES.length - 1) await sleep(3000)
   }
 
   console.log(`\n========== 导入完成 ==========`)

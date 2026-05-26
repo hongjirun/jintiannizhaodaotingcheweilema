@@ -1,0 +1,90 @@
+<view class="page">
+  <!-- 表单内容 -->
+  <view class="form-container">
+    <!-- 基本信息卡片 -->
+    <view class="form-card">
+      <view class="card-header">
+        <text class="card-title">基本信息</text>
+      </view>
+      
+      <view class="form-item">
+        <view class="form-label">
+          停车场名称 <text class="required">*</text>
+        </view>
+        <input 
+          class="form-input" 
+          value="{{formData.name}}"
+          bindinput="onNameInput"
+          placeholder="例如：市民广场地下停车场"
+          maxlength="50"
+        />
+      </view>
+
+      <view class="form-item">
+        <view class="form-label">
+          详细地址 <text class="required">*</text>
+        </view>
+        <input 
+          class="form-input" 
+          value="{{formData.address}}"
+          bindinput="onAddressInput"
+          placeholder="请输入详细地址"
+          maxlength="100"
+        />
+      </view>
+
+      <view class="form-item">
+        <view class="form-label">
+          选择位置 <text class="required">*</text>
+        </view>
+        <view class="location-picker" bindtap="chooseLocation">
+          <text class="location-text {{formData.location ? '' : 'placeholder'}}">
+            {{formData.location ? formData.location.address : '点击地图选择精确位置'}}
+          </text>
+          <text class="location-icon">定位</text>
+        </view>
+      </view>
+    </view>
+
+    <!-- 补充信息卡片 -->
+    <view class="form-card">
+      <view class="card-header">
+        <text class="card-title">补充信息</text>
+      </view>
+      
+      <view class="form-item">
+        <view class="form-label">免费类型</view>
+        <view class="type-grid">
+          <view 
+            wx:for="{{freeTypes}}"
+            wx:key="value"
+            class="type-item {{formData.freeType === item.value ? 'active' : ''}}"
+            bindtap="selectType"
+            data-value="{{item.value}}"
+          >
+            <text class="type-label">{{item.label}}</text>
+          </view>
+        </view>
+      </view>
+
+      <view class="form-item">
+        <view class="form-label">备注说明</view>
+        <textarea 
+          class="form-textarea" 
+          value="{{formData.remark}}"
+          bindinput="onRemarkInput"
+          placeholder="请输入其他补充信息"
+          maxlength="200"
+        />
+      </view>
+    </view>
+  </view>
+
+  <!-- 提交按钮 -->
+  <view class="submit-area">
+    <button class="submit-btn" bindtap="submitReport" disabled="{{!canSubmit}}">
+      提交上报
+    </button>
+    <text class="submit-tip">提交后将在1-3个工作日内审核</text>
+  </view>
+</view>

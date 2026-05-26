@@ -5,8 +5,10 @@ import { ParkingModule } from './modules/parking/parking.module';
 import { AuthModule } from './modules/auth/auth.module';
 import { AdminModule } from './modules/admin/admin.module';
 import { UploadModule } from './modules/upload/upload.module';
+import { FreeParkingModule } from './modules/free-parking/free-parking.module';
 import { ParkingLot } from './modules/parking/parking-lot.entity';
 import { AdminUser } from './modules/admin/admin-user.entity';
+import { FreeParkingReport } from './modules/free-parking/free-parking.entity';
 
 @Module({
   imports: [
@@ -21,7 +23,7 @@ import { AdminUser } from './modules/admin/admin-user.entity';
         username: config.get('DB_USERNAME', 'root'),
         password: config.get('DB_PASSWORD', ''),
         database: config.get('DB_DATABASE', 'parking_db'),
-        entities: [ParkingLot, AdminUser],
+        entities: [ParkingLot, AdminUser, FreeParkingReport],
         synchronize: false,
         charset: 'utf8mb4',
       }),
@@ -30,6 +32,7 @@ import { AdminUser } from './modules/admin/admin-user.entity';
     AuthModule,
     AdminModule,
     UploadModule,
+    FreeParkingModule,
   ],
 })
 export class AppModule {}

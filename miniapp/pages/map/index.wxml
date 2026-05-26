@@ -1,0 +1,79 @@
+<view class="container">
+  <!-- 地图全屏 -->
+  <map
+    id="myMap"
+    class="map-view"
+    latitude="{{center.lat}}"
+    longitude="{{center.lng}}"
+    markers="{{markers}}"
+    scale="{{scale}}"
+    show-location
+    enable-zoom
+    enable-scroll
+    bindregionchange="onRegionChange"
+    bindmarkertap="onMarkerTap"
+  />
+
+  <!-- 顶部导航栏浮层 -->
+  <cover-view class="nav-float" style="padding-top: {{statusBarHeight}}px;">
+    <cover-view class="nav-inner">
+      <cover-view class="nav-brand">
+        <cover-view class="brand-icon-text">P</cover-view>
+        <cover-view class="brand-name">找停车位</cover-view>
+      </cover-view>
+      <cover-view class="nav-search-btn" bindtap="goSearch">
+        <cover-view class="search-hint">搜索停车场...</cover-view>
+      </cover-view>
+    </cover-view>
+  </cover-view>
+
+  <!-- 加载提示 -->
+  <cover-view wx:if="{{loading}}" class="loading-tip">
+    <cover-view class="tip-text">加载中...</cover-view>
+  </cover-view>
+  <cover-view wx:elif="{{markers.length > 0}}" class="count-tip">
+    <cover-view class="tip-text">找到 {{markers.length}} 个停车场</cover-view>
+  </cover-view>
+
+  <!-- 定位按钮 -->
+  <cover-view class="locate-btn" bindtap="locateMe">
+    <cover-view class="locate-icon-text">定位</cover-view>
+    <cover-view class="locate-label">定位</cover-view>
+  </cover-view>
+
+  <!-- 停车场详情卡片 -->
+  <view wx:if="{{selectedLot}}" class="detail-overlay" bindtap="closeDetail">
+    <view class="bottom-sheet" catchtap="stopPropagation">
+      <view class="sheet-handle"></view>
+      <view class="sheet-header">
+        <view class="sheet-title-wrap">
+          <text class="sheet-name">{{selectedLot.name}}</text>
+          <view wx:if="{{distText}}" class="dist-badge">
+            <text class="dist-text">{{distText}}</text>
+          </view>
+        </view>
+        <view class="sheet-close" bindtap="closeDetail">
+          <text class="close-icon">×</text>
+        </view>
+      </view>
+      <view class="sheet-body">
+        <view class="info-row">
+          <text class="info-icon">位置</text>
+          <text class="info-text">{{selectedLot.address || '暂无地址'}}</text>
+        </view>
+        <view wx:if="{{selectedLot.phone}}" class="info-row">
+          <text class="info-icon">电话</text>
+          <text class="info-text">{{selectedLot.phone}}</text>
+        </view>
+        <view wx:if="{{selectedLot.city}}" class="info-row">
+          <text class="info-icon">城市</text>
+          <text class="info-text">{{selectedLot.city}}</text>
+        </view>
+      </view>
+      <view class="sheet-actions">
+        <button class="btn-navi" bindtap="startNavi">一键导航</button>
+        <button wx:if="{{selectedLot.phone}}" class="btn-call" bindtap="makeCall">复制电话</button>
+      </view>
+    </view>
+  </view>
+</view>

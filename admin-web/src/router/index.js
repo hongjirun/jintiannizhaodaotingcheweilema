@@ -22,6 +22,11 @@ const routes = [
         name: 'Parking',
         component: () => import('@/views/parking/ParkingView.vue'),
       },
+      {
+        path: 'free-parking',
+        name: 'FreeParking',
+        component: () => import('@/views/free-parking/FreeParkingView.vue'),
+      },
     ],
   },
 ]

@@ -1,26 +1,11 @@
 {
   "pages": [
-    {
-      "path": "pages/map/index",
-      "style": {
-        "navigationStyle": "custom",
-        "navigationBarTitleText": ""
-      }
-    },
-    {
-      "path": "pages/search/index",
-      "style": {
-        "navigationBarTitleText": "搜索停车场"
-      }
-    },
-    {
-      "path": "pages/profile/index",
-      "style": {
-        "navigationBarTitleText": "我的"
-      }
-    }
+    "pages/map/index",
+    "pages/search/index",
+    "pages/profile/index",
+    "pages/report/index"
   ],
-  "globalStyle": {
+  "window": {
     "navigationBarTextStyle": "black",
     "navigationBarTitleText": "今天你找到停车位了吗",
     "navigationBarBackgroundColor": "#ffffff",
@@ -45,5 +30,12 @@
         "text": "我的"
       }
     ]
-  }
+  },
+  "permission": {
+    "scope.userLocation": {
+      "desc": "获取您的位置，用于查找附近停车场"
+    }
+  },
+  "requiredPrivateInfos": ["getLocation", "chooseLocation"],
+  "usingComponents": {}
 }
