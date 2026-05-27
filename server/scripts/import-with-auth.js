@@ -10,6 +10,10 @@ const API_BASE = 'https://parking.xianshihuodong.xyz/api'
 // 管理员账号密码（从命令行参数获取，默认为 admin/admin123456）
 const ADMIN_USER = process.argv[2] || 'admin'
 const ADMIN_PASS = process.argv[3] || 'admin123456'
+// 从第几个城市开始（0-based，默认0），用法: node import-with-auth.js admin admin123456 50
+const START_INDEX = parseInt(process.argv[4]) || 0
+// 最多导几个城市（默认全部），用法: node import-with-auth.js admin admin123456 0 30
+const MAX_COUNT = parseInt(process.argv[5]) || 999
 
 // 全国城市列表（按优先级排序）
 const CITIES = [
@@ -75,19 +79,54 @@ async function login() {
 
 function sleep(ms) { return new Promise(r => setTimeout(r, ms)) }
 
+async function getImportedCities(token) {
+  try {
+    const res = await apiRequest('GET', '/admin/parking/stats', null, token)
+    if (res.code === 0 && res.data?.cityStats) {
+      // 同时保留带"市"和不带"市"两种形式，确保能匹配上
+      const set = new Set()
+      res.data.cityStats.forEach(s => {
+        const name = s.city || ''
+        set.add(name)
+        set.add(name.replace(/市$/, ''))
+        set.add(name + '市')
+      })
+      return set
+    }
+  } catch (e) {
+    console.log('⚠ 获取已导入城市失败，将导入全部城市')
+  }
+  return new Set()
+}
+
 async function main() {
   console.log(`开始导入 ${CITIES.length} 个城市的停车场数据...`)
   console.log('API地址:', API_BASE)
   
   // 登录获取 token
   const token = await login()
-  
+
+  // 获取已有数据的城市，跳过
+  process.stdout.write('正在查询已导入城市...')
+  const importedCities = await getImportedCities(token)
+  console.log(` 已有数据城市 ${importedCities.size} 个: ${[...importedCities].join(', ') || '无'}`)
+
+  let pendingCities = CITIES.filter(c => !importedCities.has(c))
+  // 按 START_INDEX 和 MAX_COUNT 切片
+  pendingCities = pendingCities.slice(START_INDEX, START_INDEX + MAX_COUNT)
+  console.log(`待导入城市: ${pendingCities.length} 个 (从第${START_INDEX + 1}个未导入城市开始)\n`)
+
+  if (pendingCities.length === 0) {
+    console.log('所有城市已导入完毕，无需重复导入。')
+    return
+  }
+
   let total = 0
   let failed = []
 
-  for (let i = 0; i < CITIES.length; i++) {
-    const city = CITIES[i]
-    process.stdout.write(`[${i+1}/${CITIES.length}] ${city} ... `)
+  for (let i = 0; i < pendingCities.length; i++) {
+    const city = pendingCities[i]
+    process.stdout.write(`[${i+1}/${pendingCities.length}] ${city} ... `)
     try {
       const res = await apiRequest('POST', '/admin/parking/import/poi', { city }, token)
       const count = res.message?.match(/(\d+)/)?.[1] || '?'
@@ -98,11 +137,11 @@ async function main() {
       failed.push(city)
     }
     // 避免频率限制，每个城市间隔3秒
-    if (i < CITIES.length - 1) await sleep(3000)
+    if (i < pendingCities.length - 1) await sleep(3000)
   }
 
   console.log(`\n========== 导入完成 ==========`)
-  console.log(`累计导入: ${total} 条`)
+  console.log(`本次导入: ${total} 条`)
   if (failed.length > 0) {
     console.log(`失败城市 (${failed.length}): ${failed.join(', ')}`)
   }

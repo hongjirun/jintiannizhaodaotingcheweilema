@@ -4,8 +4,28 @@ import axios from 'axios';
 @Injectable()
 export class TencentPoiService {
   private readonly logger = new Logger(TencentPoiService.name);
-  private readonly key = process.env.TENCENT_MAP_KEY;
   private readonly baseUrl = 'https://apis.map.qq.com/ws/place/v1/search';
+  private keyIndex = 0;
+
+  private getKeys(): string[] {
+    const raw = process.env.TENCENT_MAP_KEY || '';
+    return raw.split(',').map(k => k.trim()).filter(Boolean);
+  }
+
+  private getCurrentKey(): string {
+    const keys = this.getKeys();
+    return keys[this.keyIndex % keys.length];
+  }
+
+  private switchKey(): boolean {
+    const keys = this.getKeys();
+    if (this.keyIndex + 1 < keys.length) {
+      this.keyIndex++;
+      this.logger.warn(`Key配额耗尽，切换到第${this.keyIndex + 1}个Key`);
+      return true;
+    }
+    return false;
+  }
 
   async fetchParkingByCity(city: string): Promise<any[]> {
     const results: any[] = [];
@@ -21,12 +41,18 @@ export class TencentPoiService {
             boundary: `region(${city},0)`,
             page_size: pageSize,
             page_index: page,
-            key: this.key,
+            key: this.getCurrentKey(),
           },
           timeout: 10000,
         });
 
         const data = res.data;
+        // 配额耗尽(status=120)或Key无效(status=110)时切换Key重试
+        if (data.status === 120 || data.status === 110) {
+          if (this.switchKey()) continue;
+          this.logger.error('所有Key配额已耗尽');
+          break;
+        }
         if (data.status !== 0 || !data.data || data.data.length === 0) {
           break;
         }

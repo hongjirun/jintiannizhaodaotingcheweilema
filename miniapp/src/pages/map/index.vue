@@ -89,7 +89,7 @@ const sysInfo = uni.getSystemInfoSync()
 const statusBarHeight = sysInfo.statusBarHeight || 20
 
 const center = ref({ lat: 23.129, lng: 113.264 })
-const scale = ref(15)
+const scale = ref(14)
 const markers = ref([])
 const lots = ref([])
 const selectedLot = ref(null)
@@ -134,8 +134,16 @@ function locateMe() {
   })
 }
 
+function scaleToDelta(s) {
+  if (s >= 16) return 0.15
+  if (s >= 14) return 0.3
+  if (s >= 12) return 0.8
+  if (s >= 10) return 2.0
+  return 4.0
+}
+
 async function loadNearby(lat, lng) {
-  const delta = 0.3
+  const delta = scaleToDelta(scale.value)
   loading.value = true
   try {
     const res = await parkingRequest.getByBounds(lat - delta, lng - delta, lat + delta, lng + delta)
@@ -148,16 +156,15 @@ async function loadNearby(lat, lng) {
 let regionChangeTimer = null
 function onRegionChange(e) {
   if (e.type === 'end') {
-    if (e.detail && e.detail.centerLocation) {
-      regionCenter = {
-        lat: e.detail.centerLocation.latitude,
-        lng: e.detail.centerLocation.longitude,
-      }
-    }
     clearTimeout(regionChangeTimer)
     regionChangeTimer = setTimeout(() => {
-      const loc = regionCenter || center.value
-      loadNearby(loc.lat, loc.lng)
+      const mapCtx = uni.createMapContext('myMap')
+      mapCtx.getCenterLocation({
+        success: (res) => {
+          if (res.scale) scale.value = res.scale
+          loadNearby(res.latitude, res.longitude)
+        }
+      })
     }, 800)
   }
 }
@@ -208,7 +215,17 @@ function makeCall() {
 }
 
 onMounted(() => {
-  locateMe()
+  uni.getLocation({
+    type: 'gcj02',
+    isHighAccuracy: false,
+    success: (res) => {
+      center.value = { lat: res.latitude, lng: res.longitude }
+      loadNearby(res.latitude, res.longitude)
+    },
+    fail: () => {
+      loadNearby(center.value.lat, center.value.lng)
+    },
+  })
 })
 
 onShow(() => {
