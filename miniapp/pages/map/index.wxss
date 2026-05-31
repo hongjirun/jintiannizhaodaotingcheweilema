@@ -47,7 +47,7 @@
   z-index: 50;
   gap: 4rpx;
 }
-.locate-icon-text { font-size: 32rpx; color: #1677ff; line-height: 1; text-align: center; }
+.locate-icon-text { font-size: 44rpx; line-height: 1; text-align: center; }
 .locate-label { font-size: 20rpx; color: #333; }
 
 .detail-overlay {

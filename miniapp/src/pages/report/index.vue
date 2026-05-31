@@ -31,18 +31,6 @@
           />
         </view>
 
-        <view class="form-item">
-          <view class="form-label">
-            <text class="label-icon">📍</text>
-            详细地址 <text class="required">*</text>
-          </view>
-          <input 
-            class="form-input" 
-            v-model="formData.address" 
-            placeholder="请输入详细地址"
-            maxlength="100"
-          />
-        </view>
 
         <view class="form-item">
           <view class="form-label">
@@ -60,7 +48,7 @@
         <view class="form-item">
           <view class="form-label">
             <text class="label-icon">⏰</text>
-            免费时段 <text class="required">*</text>
+            免费时段 <text class="optional">（选填）</text>
           </view>
           <view class="time-inputs">
             <input 
@@ -204,10 +192,7 @@ const typeIcons = {
 
 const canSubmit = computed(() => {
   return formData.value.name && 
-         formData.value.address && 
          formData.value.location &&
-         formData.value.freeTimeStart && 
-         formData.value.freeTimeEnd &&
          reportEnabled.value
 })
 
@@ -384,6 +369,11 @@ async function submitReport() {
 }
 .required { 
   color: #ff4d4f; 
+  margin-left: 4rpx;
+}
+.optional {
+  color: #999;
+  font-size: 24rpx;
   margin-left: 4rpx;
 }
 

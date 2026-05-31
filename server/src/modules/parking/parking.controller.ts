@@ -52,6 +52,12 @@ export class ParkingController {
     return this.parkingService.search(keyword, city);
   }
 
+  @Get('all')
+  @ApiOperation({ summary: '获取全量停车场轻量数据（仅id/name/lat/lng）' })
+  findAllLite() {
+    return this.parkingService.findAllLite();
+  }
+
   @Get(':id')
   @ApiOperation({ summary: '获取停车场详情' })
   findOne(@Param('id') id: string) {

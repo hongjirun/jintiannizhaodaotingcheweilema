@@ -9,32 +9,6 @@
       
       <view class="form-item">
         <view class="form-label">
-          停车场名称 <text class="required">*</text>
-        </view>
-        <input 
-          class="form-input" 
-          value="{{formData.name}}"
-          bindinput="onNameInput"
-          placeholder="例如：市民广场地下停车场"
-          maxlength="50"
-        />
-      </view>
-
-      <view class="form-item">
-        <view class="form-label">
-          详细地址 <text class="required">*</text>
-        </view>
-        <input 
-          class="form-input" 
-          value="{{formData.address}}"
-          bindinput="onAddressInput"
-          placeholder="请输入详细地址"
-          maxlength="100"
-        />
-      </view>
-
-      <view class="form-item">
-        <view class="form-label">
           选择位置 <text class="required">*</text>
         </view>
         <view class="location-picker" bindtap="chooseLocation">
@@ -43,6 +17,19 @@
           </text>
           <text class="location-icon">定位</text>
         </view>
+      </view>
+
+      <view class="form-item">
+        <view class="form-label">
+          停车场名称 <text class="required">*</text>
+        </view>
+        <input 
+          class="form-input" 
+          value="{{formData.name}}"
+          bindinput="onNameInput"
+          placeholder="选择位置后自动填入，可手动修改"
+          maxlength="50"
+        />
       </view>
     </view>
 
@@ -53,7 +40,7 @@
       </view>
       
       <view class="form-item">
-        <view class="form-label">免费类型</view>
+        <view class="form-label">停车类型</view>
         <view class="type-grid">
           <view 
             wx:for="{{freeTypes}}"
@@ -64,6 +51,20 @@
           >
             <text class="type-label">{{item.label}}</text>
           </view>
+        </view>
+      </view>
+
+      <view class="form-item" wx:if="{{formData.freeType === 'not_free'}}">
+        <view class="form-label">每小时价格（元）</view>
+        <view class="price-input-wrap">
+          <input
+            class="form-input price-input"
+            type="digit"
+            value="{{formData.hourlyPrice}}"
+            bindinput="onPriceInput"
+            placeholder="请输入每小时停车费用"
+          />
+          <text class="price-unit">元/小时</text>
         </view>
       </view>
 

@@ -48,7 +48,7 @@ export class TencentPoiService {
 
         const data = res.data;
         // 配额耗尽(status=120)或Key无效(status=110)时切换Key重试
-        if (data.status === 120 || data.status === 110) {
+        if (data.status === 120 || data.status === 121 || data.status === 110) {
           if (this.switchKey()) continue;
           this.logger.error('所有Key配额已耗尽');
           break;

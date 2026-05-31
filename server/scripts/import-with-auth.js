@@ -5,7 +5,7 @@
 const https = require('https')
 const http = require('http')
 
-const API_BASE = 'https://parking.xianshihuodong.xyz/api'
+const API_BASE = 'https://api.xianshihuodong.xyz/api'
 
 // 管理员账号密码（从命令行参数获取，默认为 admin/admin123456）
 const ADMIN_USER = process.argv[2] || 'admin'

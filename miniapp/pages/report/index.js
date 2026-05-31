@@ -7,13 +7,15 @@ Page({
       address: '',
       location: null,
       freeType: 'night',
+      hourlyPrice: '',
       remark: ''
     },
     freeTypes: [
       { label: '夜间免费', value: 'night' },
       { label: '周末免费', value: 'weekend' },
       { label: '全天免费', value: 'allday' },
-      { label: '节假日免费', value: 'holiday' }
+      { label: '节假日免费', value: 'holiday' },
+      { label: '不免费', value: 'not_free' }
     ],
     canSubmit: false
   },
@@ -36,16 +38,24 @@ Page({
     this.setData({ 'formData.remark': e.detail.value })
   },
 
+  onPriceInput(e) {
+    this.setData({ 'formData.hourlyPrice': e.detail.value })
+  },
+
   chooseLocation() {
     wx.chooseLocation({
       success: (res) => {
-        this.setData({
+        const update = {
           'formData.location': {
             latitude: res.latitude,
             longitude: res.longitude,
             address: res.address || res.name
           }
-        })
+        }
+        if (res.name && !this.data.formData.name) {
+          update['formData.name'] = res.name
+        }
+        this.setData(update)
         this.checkSubmit()
       }
     })
@@ -56,8 +66,8 @@ Page({
   },
 
   checkSubmit() {
-    const { name, address, location } = this.data.formData
-    const canSubmit = name.trim() && address.trim() && location
+    const { name, location } = this.data.formData
+    const canSubmit = name.trim() && location
     this.setData({ canSubmit })
   },
 

@@ -1,31 +1,5 @@
 <template>
   <view class="page">
-    <!-- 顶部用户信息区 -->
-    <view class="header">
-      <view class="avatar-wrap">
-        <text class="avatar-icon">👤</text>
-      </view>
-      <view class="user-info">
-        <text class="user-name">微信用户</text>
-        <text class="user-sub">欢迎使用找停车位</text>
-      </view>
-    </view>
-
-    <!-- 群聊二维码 -->
-    <view class="section">
-      <view class="section-title">加入用户群</view>
-      <view class="qrcode-card">
-        <view class="qrcode-wrap">
-          <image class="qrcode-img" src="/static/group-qrcode.png" mode="aspectFit" />
-        </view>
-        <view class="qrcode-info">
-          <text class="qrcode-title">扫码加入停车交流群</text>
-          <text class="qrcode-sub">停车技巧分享 · 数据纠错反馈</text>
-          <text class="qrcode-sub">与更多车主交流经验</text>
-        </view>
-      </view>
-    </view>
-
     <view class="section">
       <view class="section-title">功能服务</view>
       <view class="menu-list">
@@ -34,20 +8,9 @@
           <text class="menu-label">免费停车点位上报</text>
           <text class="menu-arrow">›</text>
         </view>
-      </view>
-    </view>
-
-    <view class="section">
-      <view class="section-title">关于应用</view>
-      <view class="menu-list">
-        <view class="menu-item">
-          <text class="menu-icon">📱</text>
-          <text class="menu-label">应用版本</text>
-          <text class="menu-value">v1.0.0</text>
-        </view>
-        <view class="menu-item" @tap="showAbout">
-          <text class="menu-icon">ℹ️</text>
-          <text class="menu-label">关于我们</text>
+        <view class="menu-item" @tap="openGroupChat">
+          <text class="menu-icon">💬</text>
+          <text class="menu-label">加入群聊</text>
           <text class="menu-arrow">›</text>
         </view>
       </view>
@@ -62,17 +25,25 @@
 </template>
 
 <script setup>
-function showAbout() {
-  uni.showModal({
-    title: '今天你找到停车位了吗',
-    content: '全国停车场地图查询小程序，帮助您快速找到附近停车场并一键导航。',
-    showCancel: false,
-    confirmText: '知道了',
-  })
-}
-
 function goToReport() {
   uni.navigateTo({ url: '/pages/report/index' })
+}
+
+function openGroupChat() {
+  uni.showModal({
+    title: '加入停车交流群',
+    content: '扫描群二维码加入停车技巧分享群，与更多车主交流经验。',
+    confirmText: '查看二维码',
+    cancelText: '取消',
+    success(res) {
+      if (res.confirm) {
+        uni.previewImage({
+          urls: ['/static/group-qrcode.png'],
+          current: '/static/group-qrcode.png',
+        })
+      }
+    }
+  })
 }
 </script>
 

@@ -10,6 +10,15 @@ export class ParkingService {
     private readonly parkingRepo: Repository<ParkingLot>,
   ) {}
 
+  async findAllLite() {
+    const list = await this.parkingRepo
+      .createQueryBuilder('p')
+      .where('p.status = 1')
+      .select(['p.id', 'p.name', 'p.latitude', 'p.longitude'])
+      .getMany();
+    return { code: 0, data: list };
+  }
+
   async findByBounds(swLat: number, swLng: number, neLat: number, neLng: number) {
     const list = await this.parkingRepo
       .createQueryBuilder('p')

@@ -99,10 +99,11 @@
       <a-descriptions :column="1" bordered size="small" style="margin-bottom:16px">
         <a-descriptions-item label="停车场名称">{{ currentRecord.name }}</a-descriptions-item>
         <a-descriptions-item label="详细地址">{{ currentRecord.address }}</a-descriptions-item>
-        <a-descriptions-item label="免费时段">{{ currentRecord.freeTimeStart }} - {{ currentRecord.freeTimeEnd }}</a-descriptions-item>
-        <a-descriptions-item label="免费类型">{{ freeTypeMap[currentRecord.freeType] }}</a-descriptions-item>
+        <a-descriptions-item label="免费时段" v-if="currentRecord.freeType !== 'not_free'">{{ currentRecord.freeTimeStart || '-' }} - {{ currentRecord.freeTimeEnd || '-' }}</a-descriptions-item>
+        <a-descriptions-item label="停车类型">{{ freeTypeMap[currentRecord.freeType] }}</a-descriptions-item>
+        <a-descriptions-item label="每小时价格" v-if="currentRecord.freeType === 'not_free'">{{ currentRecord.hourlyPrice ? currentRecord.hourlyPrice + ' 元/小时' : '-' }}</a-descriptions-item>
         <a-descriptions-item label="车位数量">{{ currentRecord.parkingSpaces || '-' }}</a-descriptions-item>
-        <a-descriptions-item label="上报人">{{ currentRecord.reporterName }}</a-descriptions-item>
+        <a-descriptions-item label="上报人">{{ currentRecord.reporterName || '-' }}</a-descriptions-item>
         <a-descriptions-item label="上报时间">{{ formatTime(currentRecord.createdAt) }}</a-descriptions-item>
         <a-descriptions-item label="备注说明" v-if="currentRecord.remark">{{ currentRecord.remark }}</a-descriptions-item>
       </a-descriptions>
@@ -150,8 +151,9 @@
         <a-descriptions-item label="停车场名称">{{ currentRecord.name }}</a-descriptions-item>
         <a-descriptions-item label="详细地址">{{ currentRecord.address }}</a-descriptions-item>
         <a-descriptions-item label="坐标位置">{{ currentRecord.latitude }}, {{ currentRecord.longitude }}</a-descriptions-item>
-        <a-descriptions-item label="免费时段">{{ currentRecord.freeTimeStart }} - {{ currentRecord.freeTimeEnd }}</a-descriptions-item>
-        <a-descriptions-item label="免费类型">{{ freeTypeMap[currentRecord.freeType] }}</a-descriptions-item>
+        <a-descriptions-item label="免费时段" v-if="currentRecord.freeType !== 'not_free'">{{ currentRecord.freeTimeStart || '-' }} - {{ currentRecord.freeTimeEnd || '-' }}</a-descriptions-item>
+        <a-descriptions-item label="停车类型">{{ freeTypeMap[currentRecord.freeType] }}</a-descriptions-item>
+        <a-descriptions-item label="每小时价格" v-if="currentRecord.freeType === 'not_free'">{{ currentRecord.hourlyPrice ? currentRecord.hourlyPrice + ' 元/小时' : '-' }}</a-descriptions-item>
         <a-descriptions-item label="车位数量">{{ currentRecord.parkingSpaces || '-' }}</a-descriptions-item>
         <a-descriptions-item label="上报人">{{ currentRecord.reporterName }}</a-descriptions-item>
         <a-descriptions-item label="上报时间">{{ formatTime(currentRecord.createdAt) }}</a-descriptions-item>
@@ -233,7 +235,8 @@ const freeTypeMap = {
   night: '夜间免费', 
   weekend: '周末免费', 
   allday: '全天免费', 
-  holiday: '节假日免费' 
+  holiday: '节假日免费',
+  not_free: '不免费'
 }
 
 const columns = [

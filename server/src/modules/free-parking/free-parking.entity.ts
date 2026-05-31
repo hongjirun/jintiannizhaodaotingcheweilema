@@ -8,7 +8,7 @@ export class FreeParkingReport {
   @Column({ length: 100, comment: '停车场名称' })
   name: string
 
-  @Column({ length: 200, comment: '详细地址' })
+  @Column({ length: 200, nullable: true, comment: '详细地址' })
   address: string
 
   @Column({ type: 'decimal', precision: 10, scale: 6, comment: '纬度' })
@@ -17,17 +17,20 @@ export class FreeParkingReport {
   @Column({ type: 'decimal', precision: 10, scale: 6, comment: '经度' })
   longitude: number
 
-  @Column({ length: 20, comment: '免费开始时间' })
+  @Column({ length: 20, nullable: true, comment: '免费开始时间' })
   freeTimeStart: string
 
-  @Column({ length: 20, comment: '免费结束时间' })
+  @Column({ length: 20, nullable: true, comment: '免费结束时间' })
   freeTimeEnd: string
 
   @Column({ type: 'int', nullable: true, comment: '车位数量' })
   parkingSpaces: number
 
-  @Column({ length: 20, default: 'night', comment: '免费类型: night/weekend/allday/holiday' })
+  @Column({ length: 20, default: 'night', comment: '免费类型: night/weekend/allday/holiday/not_free' })
   freeType: string
+
+  @Column({ type: 'decimal', precision: 8, scale: 2, nullable: true, comment: '每小时价格（不免费时填写）' })
+  hourlyPrice: number
 
   @Column({ type: 'text', nullable: true, comment: '备注说明' })
   remark: string
