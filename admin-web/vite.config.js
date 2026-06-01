@@ -4,7 +4,7 @@ import { resolve } from 'path'
 
 export default defineConfig({
   plugins: [vue()],
-  base: './', // 使用相对路径，解决部署到子目录时资源404问题
+  base: './?v=20240601', // 添加版本号强制刷新缓存
   resolve: {
     alias: {
       '@': resolve(__dirname, 'src'),
