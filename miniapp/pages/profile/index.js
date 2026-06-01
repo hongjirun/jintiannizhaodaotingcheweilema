@@ -10,5 +10,10 @@ Page({
 
   goToReport() {
     wx.navigateTo({ url: '/pages/report/index' })
+  },
+
+  joinGroup() {
+    console.log('joinGroup clicked')
+    wx.showToast({ title: '加入群聊功能开发中', icon: 'none', duration: 2000 })
   }
 })

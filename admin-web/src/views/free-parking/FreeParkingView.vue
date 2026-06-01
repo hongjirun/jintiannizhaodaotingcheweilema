@@ -68,11 +68,6 @@
             />
             <span v-else>-</span>
           </template>
-          <template v-if="column.key === 'location'">
-            <a-button type="link" size="small" @click="showLocation(record)">
-              查看位置
-            </a-button>
-          </template>
           <template v-if="column.key === 'action'">
             <a-space>
               <a @click="openReviewModal(record)" v-if="record.status === 0">审核</a>
@@ -192,28 +187,6 @@
       </div>
     </a-modal>
 
-    <!-- 位置预览弹窗 -->
-    <a-modal
-      v-model:open="locationModalVisible"
-      title="位置预览"
-      :footer="null"
-      width="500px"
-    >
-      <div style="text-align: center;">
-        <div style="margin-bottom: 8px; color: #666;">{{ currentRecord.address }}</div>
-        <div style="margin-bottom: 8px; color: #999;">
-          坐标: {{ currentRecord.latitude }}, {{ currentRecord.longitude }}
-        </div>
-        <iframe
-          v-if="locationModalVisible"
-          :src="`https://apis.map.qq.com/tools/poimarker?type=0&marker=coord:${currentRecord.latitude},${currentRecord.longitude};title:${currentRecord.name};addr:${currentRecord.address}&key=UAYBZ-37KC7-AMXX2-HNLUT-5INIQ-N4BKS`"
-          width="450"
-          height="300"
-          frameborder="0"
-          style="border: 1px solid #ddd; border-radius: 4px;"
-        ></iframe>
-      </div>
-    </a-modal>
   </div>
 </template>
 
@@ -248,7 +221,6 @@ const columns = [
   { title: '图片', key: 'images', width: 60 },
   { title: '上报人', dataIndex: 'reporterName', key: 'reporterName', width: 100 },
   { title: '状态', dataIndex: 'status', key: 'status', width: 80 },
-  { title: '位置', key: 'location', width: 80 },
   { title: '操作', key: 'action', width: 140, fixed: 'right' },
 ]
 
@@ -261,8 +233,6 @@ const reviewForm = reactive({ status: 1, reviewRemark: '' })
 // 详情弹窗相关
 const detailModalVisible = ref(false)
 
-// 位置弹窗相关
-const locationModalVisible = ref(false)
 
 async function loadData() {
   loading.value = true
@@ -335,11 +305,6 @@ function openReviewModal(record) {
 function openDetailModal(record) {
   currentRecord.value = record
   detailModalVisible.value = true
-}
-
-function showLocation(record) {
-  currentRecord.value = record
-  locationModalVisible.value = true
 }
 
 async function handleReview() {

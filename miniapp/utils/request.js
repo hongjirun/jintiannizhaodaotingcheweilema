@@ -12,7 +12,7 @@ function request(options) {
         ...options.header,
       },
       success: (res) => {
-        if (res.statusCode === 200) {
+        if (res.statusCode >= 200 && res.statusCode < 300) {
           resolve(res.data)
         } else {
           wx.showToast({ title: '网络错误', icon: 'none' })

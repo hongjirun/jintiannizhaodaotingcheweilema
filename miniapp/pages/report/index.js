@@ -98,7 +98,9 @@ Page({
       }
     } catch (err) {
       wx.hideLoading()
-      wx.showToast({ title: '提交失败', icon: 'none' })
+      console.error('提交失败:', err)
+      const errorMsg = err.data?.message || err.message || '提交失败'
+      wx.showToast({ title: errorMsg, icon: 'none' })
     }
   }
 })
