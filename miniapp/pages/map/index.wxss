@@ -18,13 +18,13 @@
   padding: 10rpx 24rpx; gap: 16rpx;
   height: 72rpx; box-sizing: border-box;
 }
-.nav-brand { display: flex; align-items: center; gap: 8rpx; flex-shrink: 0; }
-.brand-icon-text { font-size: 36rpx; color: #1677ff; font-weight: bold; }
-.brand-name { font-size: 30rpx; font-weight: bold; color: #1677ff; }
+.nav-brand { display: flex; align-items: center; flex-shrink: 0; }
+.brand-name { font-size: 24rpx; font-weight: bold; color: #1677ff; white-space: nowrap; }
 .nav-search-btn {
   flex: 1; display: flex; align-items: center;
   background: #f4f6f9; border-radius: 36rpx;
-  padding: 10rpx 24rpx; height: 52rpx;
+  padding: 10rpx 20rpx; height: 52rpx;
+  max-width: 280rpx;
 }
 .search-hint { font-size: 26rpx; color: #bbb; }
 
@@ -49,6 +49,16 @@
 }
 .locate-icon-text { font-size: 44rpx; line-height: 1; text-align: center; }
 .locate-label { font-size: 20rpx; color: #333; }
+
+/* 当前位置信息展示（审核用） */
+.location-info {
+  position: fixed; top: 160rpx; left: 24rpx; right: 24rpx;
+  background: rgba(22, 119, 255, 0.9); color: #fff;
+  padding: 16rpx 24rpx; border-radius: 16rpx;
+  z-index: 50;
+  box-shadow: 0 4rpx 20rpx rgba(0,0,0,0.15);
+}
+.location-text { font-size: 26rpx; text-align: center; font-weight: bold; }
 
 .detail-overlay {
   position: fixed; top: 0; left: 0; right: 0; bottom: 0;

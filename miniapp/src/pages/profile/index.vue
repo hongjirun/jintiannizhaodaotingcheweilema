@@ -3,7 +3,7 @@
     <view class="section">
       <view class="section-title">功能服务</view>
       <view class="menu-list">
-        <view class="menu-item" @tap="goToReport">
+        <view v-if="reportEnabled" class="menu-item" @tap="goToReport">
           <text class="menu-icon">🅿️</text>
           <text class="menu-label">免费停车点位上报</text>
           <text class="menu-arrow">›</text>
@@ -25,6 +25,26 @@
 </template>
 
 <script setup>
+import { ref, onMounted } from 'vue'
+import { parkingRequest } from '@/utils/request'
+
+const reportEnabled = ref(false)
+
+// 获取上报开关状态
+async function checkReportEnabled() {
+  try {
+    const res = await parkingRequest.checkReportEnabled()
+    console.log('API返回:', res)
+    if (res.code === 0) {
+      reportEnabled.value = res.data.enabled
+      console.log('上报开关状态:', reportEnabled.value)
+    }
+  } catch (error) {
+    console.error('获取上报开关状态失败:', error)
+    reportEnabled.value = false
+  }
+}
+
 function goToReport() {
   uni.navigateTo({ url: '/pages/report/index' })
 }
@@ -45,6 +65,10 @@ function openGroupChat() {
     }
   })
 }
+
+onMounted(() => {
+  checkReportEnabled()
+})
 </script>
 
 <style scoped>

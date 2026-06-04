@@ -80,5 +80,20 @@ export const freeParkingApi = {
   // 切换开关状态
   toggleEnabled(enabled) {
     return request.post('/free-parking/admin/toggle-enabled', { enabled })
+  },
+
+  // 更新位置
+  updateLocation(id, data) {
+    if (isMock) {
+      // mock模式：直接修改本地数据
+      const index = mockReports.findIndex(item => item.id === id)
+      if (index !== -1) {
+        mockReports[index].latitude = data.latitude
+        mockReports[index].longitude = data.longitude
+        mockReports[index].address = data.address
+      }
+      return Promise.resolve({ code: 0, message: '更新成功' })
+    }
+    return request.post(`/free-parking/admin/update-location/${id}`, data)
   }
 }

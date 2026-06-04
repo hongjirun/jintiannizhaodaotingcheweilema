@@ -37,13 +37,9 @@ export const parkingRequest = {
   getDetail: (id) =>
     request({ url: `/parking/${id}` }),
 
-  // 免费停车点位上报
-  createReport: (data) =>
-    request({ url: '/free-parking/report', method: 'POST', data }),
+  // 免费停车点位上报相关
   checkReportEnabled: () =>
     request({ url: '/free-parking/check-enabled' }),
-  getApprovedFreeParking: (bounds) => {
-    const params = bounds ? `?sw_lat=${bounds.sw_lat}&sw_lng=${bounds.sw_lng}&ne_lat=${bounds.ne_lat}&ne_lng=${bounds.ne_lng}` : ''
-    return request({ url: `/free-parking/approved${params}` })
-  },
+  createReport: (data) =>
+    request({ url: '/free-parking/report', method: 'POST', data }),
 }

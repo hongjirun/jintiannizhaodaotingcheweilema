@@ -7,9 +7,15 @@
           <text class="brand-icon">🅿</text>
           <text class="brand-name">找停车位</text>
         </view>
+        <picker mode="selector" :range="cities" :value="cityIndex" @change="onCityChange" class="city-picker">
+          <view class="city-picker-btn">
+            <text class="city-name">{{ cities[cityIndex] }}</text>
+            <text class="city-arrow">▼</text>
+          </view>
+        </picker>
         <view class="nav-search-btn" @tap="goSearch">
           <text class="search-icon-text">🔍</text>
-          <text class="search-hint">搜索停车场...</text>
+          <text class="search-hint">搜索...</text>
         </view>
       </view>
     </view>
@@ -99,7 +105,41 @@ const lots = ref([])
 const selectedLot = ref(null)
 const loading = ref(false)
 let regionCenter = null
-let locating = false
+
+// 热门城市列表
+const cities = [
+  '北京市', '上海市', '广州市', '深圳市', '天津市', '重庆市',
+  '杭州市', '南京市', '武汉市', '成都市', '西安市', '沈阳市',
+  '青岛市', '郑州市', '苏州市', '长沙市', '大连市', '东莞市',
+  '佛山市', '无锡市', '宁波市', '厦门市', '福州市', '哈尔滨市',
+  '长春市', '石家庄市', '济南市', '太原市', '昆明市', '合肥市',
+  '南昌市', '贵阳市', '兰州市', '海口市', '南宁市', '呼和浩特市',
+  '乌鲁木齐市', '银川市', '西宁市', '拉萨市', '台北市'
+]
+const cityIndex = ref(0)
+
+// 城市坐标映射
+const cityCoords = {
+  '北京市': { lat: 39.9042, lng: 116.4074 },
+  '上海市': { lat: 31.2304, lng: 121.4737 },
+  '广州市': { lat: 23.1291, lng: 113.2644 },
+  '深圳市': { lat: 22.5431, lng: 114.0579 },
+  '天津市': { lat: 39.0842, lng: 117.2010 },
+  '重庆市': { lat: 29.5630, lng: 106.5516 },
+  '杭州市': { lat: 30.2741, lng: 120.1551 },
+  '南京市': { lat: 32.0603, lng: 118.7969 },
+  '武汉市': { lat: 30.5928, lng: 114.3055 },
+  '成都市': { lat: 30.5728, lng: 104.0668 },
+  '西安市': { lat: 34.3416, lng: 108.9398 },
+  '沈阳市': { lat: 41.8057, lng: 123.4315 },
+  '青岛市': { lat: 36.0671, lng: 120.3826 },
+  '郑州市': { lat: 34.7466, lng: 113.6253 },
+  '苏州市': { lat: 31.2989, lng: 120.5853 },
+  '长沙市': { lat: 28.2280, lng: 112.9388 },
+  '大连市': { lat: 38.9140, lng: 121.6147 },
+  '东莞市': { lat: 23.0210, lng: 113.7520 },
+  '佛山市': { lat: 23.0291, lng: 113.1220 }
+}
 
 const distText = computed(() => {
   if (!selectedLot.value) return ''
@@ -119,23 +159,18 @@ function goSearch() {
   uni.switchTab({ url: '/pages/search/index' })
 }
 
+function onCityChange(e) {
+  cityIndex.value = e.detail.value
+  const cityName = cities[cityIndex.value]
+  const coords = cityCoords[cityName] || { lat: 23.129, lng: 113.264 }
+  center.value = coords
+  scale.value = 13
+  loadNearby(coords.lat, coords.lng)
+}
+
 function locateMe() {
-  if (locating) return
-  locating = true
-  uni.getLocation({
-    type: 'gcj02',
-    success: (res) => {
-      locating = false
-      center.value = { lat: res.latitude, lng: res.longitude }
-      scale.value = 15
-      loadNearby(res.latitude, res.longitude)
-    },
-    fail: () => {
-      locating = false
-      uni.showToast({ title: '定位失败，显示默认区域', icon: 'none' })
-      loadNearby(center.value.lat, center.value.lng)
-    },
-  })
+  // 不再使用 wx.getLocation，改用城市选择
+  uni.showToast({ title: '请使用上方城市选择', icon: 'none' })
 }
 
 async function loadNearby(lat, lng) {
@@ -204,7 +239,8 @@ function makeCall() {
 }
 
 onMounted(() => {
-  locateMe()
+  // 默认加载北京数据
+  loadNearby(39.9042, 116.4074)
 })
 </script>
 
@@ -230,11 +266,22 @@ onMounted(() => {
 }
 .brand-icon { font-size: 36rpx; }
 .brand-name { font-size: 30rpx; font-weight: bold; color: #1677ff; }
+.city-picker {
+  flex-shrink: 0;
+}
+.city-picker-btn {
+  display: flex; align-items: center; gap: 6rpx;
+  background: #f4f6f9; border-radius: 36rpx;
+  padding: 10rpx 20rpx;
+  height: 48rpx;
+  box-sizing: border-box;
+}
+.city-name { font-size: 26rpx; color: #333; font-weight: 500; }
+.city-arrow { font-size: 20rpx; color: #999; }
 .nav-search-btn {
   flex: 1; display: flex; align-items: center; gap: 10rpx;
   background: #f4f6f9; border-radius: 36rpx;
   padding: 10rpx 20rpx;
-  max-width: 380rpx;
   height: 48rpx;
 }
 .search-icon-text { font-size: 28rpx; }

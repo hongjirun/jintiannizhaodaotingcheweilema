@@ -85,4 +85,14 @@ export class FreeParkingController {
   async getEnabledStatus() {
     return this.freeParkingService.checkReportEnabled()
   }
+
+  // 管理员端：更新位置信息
+  @Post('admin/update-location/:id')
+  @UseGuards(JwtAuthGuard)
+  async updateLocation(
+    @Param('id') id: string,
+    @Body() body: { latitude: number, longitude: number, address?: string, name?: string }
+  ) {
+    return this.freeParkingService.updateLocation(parseInt(id), body)
+  }
 }

@@ -1,17 +1,20 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Repository } from 'typeorm';
+import { Repository, Not, IsNull } from 'typeorm';
 import { ParkingLot } from './parking-lot.entity';
+import { FreeParkingReport } from '../free-parking/free-parking.entity';
 
 @Injectable()
 export class ParkingService {
   constructor(
     @InjectRepository(ParkingLot)
     private readonly parkingRepo: Repository<ParkingLot>,
+    @InjectRepository(FreeParkingReport)
+    private readonly freeParkingRepo: Repository<FreeParkingReport>,
   ) {}
 
   async findAllLite() {
-    const list = await this.parkingRepo
+    const list = await this.freeParkingRepo
       .createQueryBuilder('p')
       .where('p.status = 1')
       .select(['p.id', 'p.name', 'p.latitude', 'p.longitude'])
@@ -20,7 +23,7 @@ export class ParkingService {
   }
 
   async findByBounds(swLat: number, swLng: number, neLat: number, neLng: number) {
-    const list = await this.parkingRepo
+    const list = await this.freeParkingRepo
       .createQueryBuilder('p')
       .where('p.latitude BETWEEN :swLat AND :neLat', { swLat, neLat })
       .andWhere('p.longitude BETWEEN :swLng AND :neLng', { swLng, neLng })
@@ -33,7 +36,7 @@ export class ParkingService {
 
   async findNearby(lat: number, lng: number, radius: number) {
     const radiusDeg = radius / 111000;
-    const list = await this.parkingRepo
+    const list = await this.freeParkingRepo
       .createQueryBuilder('p')
       .where('p.latitude BETWEEN :minLat AND :maxLat', {
         minLat: lat - radiusDeg,
@@ -51,15 +54,15 @@ export class ParkingService {
   }
 
   async search(keyword: string, city?: string) {
-    const qb = this.parkingRepo
+    const qb = this.freeParkingRepo
       .createQueryBuilder('p')
       .where('p.name LIKE :keyword', { keyword: `%${keyword}%` })
       .andWhere('p.status = 1');
     if (city) {
-      qb.andWhere('p.city = :city', { city });
+      qb.andWhere("p.remark LIKE :city", { city: `%城市: ${city}%` });
     }
     const raw = await qb
-      .select(['p.id', 'p.name', 'p.address', 'p.city', 'p.latitude', 'p.longitude'])
+      .select(['p.id', 'p.name', 'p.address', 'p.latitude', 'p.longitude'])
       .limit(200)
       .getMany();
     const seen = new Set<string>()
@@ -79,9 +82,9 @@ export class ParkingService {
   }
 
   async findAll(page: number, pageSize: number, keyword?: string, city?: string, status?: number) {
-    const qb = this.parkingRepo.createQueryBuilder('p');
+    const qb = this.freeParkingRepo.createQueryBuilder('p');
     if (keyword) qb.andWhere('p.name LIKE :keyword', { keyword: `%${keyword}%` });
-    if (city) qb.andWhere('p.city = :city', { city });
+    if (city) qb.andWhere("p.remark LIKE :city", { city: `%城市: ${city}%` });
     if (status !== undefined && status !== null) qb.andWhere('p.status = :status', { status });
     const [list, total] = await qb
       .orderBy('p.id', 'DESC')
@@ -132,16 +135,33 @@ export class ParkingService {
   }
 
   async getStats() {
-    const total = await this.parkingRepo.count({ where: { status: 1 } });
-    const cityStats = await this.parkingRepo
+    // 统计免费停车点（有freeType的）
+    const freeCount = await this.freeParkingRepo.count({ 
+      where: { status: 1, freeType: Not(IsNull()) } 
+    });
+    
+    // 统计普通POI停车点（无freeType的）
+    const poiCount = await this.freeParkingRepo.count({ 
+      where: { status: 1, freeType: IsNull() } 
+    });
+    
+    // 城市分布统计（所有停车点）
+    const cityStats = await this.freeParkingRepo
       .createQueryBuilder('p')
-      .select('p.city', 'city')
+      .select("SUBSTRING_INDEX(p.remark, '城市: ', -1)", 'city')
       .addSelect('COUNT(*)', 'count')
       .where('p.status = 1')
-      .groupBy('p.city')
+      .andWhere("p.remark LIKE '城市: %'")
+      .groupBy('city')
       .orderBy('count', 'DESC')
       .limit(20)
       .getRawMany();
-    return { code: 0, data: { total, cityStats } };
+      
+    return { code: 0, data: { 
+      total: freeCount + poiCount, 
+      freeCount, 
+      poiCount,
+      cityStats 
+    }};
   }
 }

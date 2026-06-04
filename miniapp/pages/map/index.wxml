@@ -18,8 +18,7 @@
   <cover-view class="nav-float" style="padding-top: {{statusBarHeight}}px;">
     <cover-view class="nav-inner">
       <cover-view class="nav-brand">
-        <cover-view class="brand-icon-text">P</cover-view>
-        <cover-view class="brand-name">找停车位</cover-view>
+        <cover-view class="brand-name">今天你找到停车位了吗</cover-view>
       </cover-view>
       <cover-view class="nav-search-btn" bindtap="goSearch">
         <cover-view class="search-hint">搜索停车场...</cover-view>
@@ -39,6 +38,13 @@
   <cover-view class="locate-btn" bindtap="locateMe">
     <cover-view class="locate-icon-text">📍</cover-view>
     <cover-view class="locate-label">定位</cover-view>
+  </cover-view>
+
+  <!-- 当前位置信息展示（审核用） -->
+  <cover-view class="location-info">
+    <cover-view class="location-text" wx:if="{{userLocation && userLocation.address}}">📍 {{userLocation.address}}</cover-view>
+    <cover-view class="location-text" wx:elif="{{userLocation}}">📍 {{userLocation.lat.toFixed(4)}}, {{userLocation.lng.toFixed(4)}}</cover-view>
+    <cover-view class="location-text" wx:else>点击定位按钮获取当前位置</cover-view>
   </cover-view>
 
   <!-- 停车场详情卡片 -->

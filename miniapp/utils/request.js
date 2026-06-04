@@ -38,8 +38,6 @@ const parkingRequest = {
     request({ url: `/parking/${id}` }),
   getAllLite: () =>
     request({ url: '/parking/all' }),
-  createReport: (data) =>
-    request({ url: '/free-parking/report', method: 'POST', data }),
 }
 
 module.exports = {

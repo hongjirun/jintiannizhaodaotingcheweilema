@@ -54,16 +54,33 @@ Page({
       const lng = parseFloat(item.longitude)
       return lat >= swLat && lat <= neLat && lng >= swLng && lng <= neLng
     })
-    const markers = visible.slice(0, MAX_MARKERS).map(item => ({
-      id: Number(item.id),
-      latitude: parseFloat(item.latitude),
-      longitude: parseFloat(item.longitude),
-      title: item.name,
-      iconPath: '/static/marker.png',
-      width: 36,
-      height: 36,
-      callout: null,
-    }))
+    // 如果有用户位置，计算并显示距离
+    const userLoc = this.data.userLocation
+    const markers = visible.slice(0, MAX_MARKERS).map(item => {
+      let distText = ''
+      if (userLoc) {
+        const dist = this.calcDist(userLoc.lat, userLoc.lng, parseFloat(item.latitude), parseFloat(item.longitude))
+        distText = dist < 1 ? `距您${Math.round(dist * 1000)}米` : `距您${dist.toFixed(1)}公里`
+      }
+      return {
+        id: Number(item.id),
+        latitude: parseFloat(item.latitude),
+        longitude: parseFloat(item.longitude),
+        title: item.name,
+        iconPath: '/static/marker.png',
+        width: 36,
+        height: 36,
+        callout: {
+          content: distText ? `${item.name}\n${distText}` : item.name,
+          color: '#1677ff',
+          fontSize: 12,
+          borderRadius: 8,
+          padding: 8,
+          display: 'ALWAYS',
+          textAlign: 'center'
+        }
+      }
+    })
     this.setData({ lots: visible, markers })
   },
 
@@ -80,29 +97,36 @@ Page({
   },
 
   locateMe() {
+    // 使用精确地理定位 wx.getLocation（需要申请权限）
     wx.showToast({ title: '定位中...', icon: 'loading', duration: 3000 })
     wx.getLocation({
       type: 'gcj02',
-      isHighAccuracy: false,
+      isHighAccuracy: true,
       success: (res) => {
         wx.hideToast()
+        console.log('精确定位成功:', res.latitude, res.longitude, '精度:', res.accuracy)
+        // 格式化位置显示
+        const locationStr = `📍 当前位置: ${res.latitude.toFixed(4)}, ${res.longitude.toFixed(4)}`
         this.setData({
           center: { lat: res.latitude, lng: res.longitude },
-          scale: 14
+          userLocation: { lat: res.latitude, lng: res.longitude, accuracy: res.accuracy, address: locationStr },
+          scale: 16
         })
-        const delta = 0.15
+        // 精确范围 200米
+        const delta = 0.003
         const bounds = {
           swLat: res.latitude - delta, swLng: res.longitude - delta,
           neLat: res.latitude + delta, neLng: res.longitude + delta
         }
         this._currentBounds = bounds
         if (this._loaded) this._renderByBounds(bounds)
+        wx.showToast({ title: '定位成功', icon: 'success', duration: 2000 })
       },
       fail: (err) => {
         wx.hideToast()
-        wx.showToast({ title: '定位失败，请检查权限', icon: 'none', duration: 2000 })
-        console.error('getLocation fail', err)
-      },
+        wx.showToast({ title: '定位失败: ' + err.errMsg, icon: 'none', duration: 3000 })
+        console.error('定位失败:', err)
+      }
     })
   },
 

@@ -19,8 +19,7 @@
     <cover-view class="nav-float" :style="{ paddingTop: statusBarHeight + 'px' }">
       <cover-view class="nav-inner">
         <cover-view class="nav-brand">
-          <cover-view class="brand-icon-text">🅿</cover-view>
-          <cover-view class="brand-name">找停车位</cover-view>
+          <cover-view class="brand-name">今天你找到停车位了吗</cover-view>
         </cover-view>
         <cover-view class="nav-search-btn" @tap="goSearch">
           <cover-view class="search-hint">搜索停车场...</cover-view>
@@ -116,22 +115,7 @@ function goSearch() {
 }
 
 function locateMe() {
-  uni.showToast({ title: '定位中...', icon: 'loading', duration: 3000 })
-  uni.getLocation({
-    type: 'gcj02',
-    isHighAccuracy: true,
-    success: (res) => {
-      uni.hideToast()
-      center.value = { lat: res.latitude, lng: res.longitude }
-      scale.value = 18
-      loadNearby(res.latitude, res.longitude)
-    },
-    fail: (err) => {
-      uni.hideToast()
-      uni.showToast({ title: '定位失败，请检查权限', icon: 'none', duration: 2000 })
-      console.error('getLocation fail', err)
-    },
-  })
+  uni.showToast({ title: '请使用上方城市选择', icon: 'none', duration: 2000 })
 }
 
 function scaleToDelta(s) {
@@ -215,17 +199,7 @@ function makeCall() {
 }
 
 onMounted(() => {
-  uni.getLocation({
-    type: 'gcj02',
-    isHighAccuracy: false,
-    success: (res) => {
-      center.value = { lat: res.latitude, lng: res.longitude }
-      loadNearby(res.latitude, res.longitude)
-    },
-    fail: () => {
-      loadNearby(center.value.lat, center.value.lng)
-    },
-  })
+  loadNearby(center.value.lat, center.value.lng)
 })
 
 onShow(() => {
@@ -267,13 +241,13 @@ onHide(() => {
   padding: 10rpx 24rpx; gap: 16rpx;
   height: 72rpx; box-sizing: border-box;
 }
-.nav-brand { display: flex; align-items: center; gap: 8rpx; flex-shrink: 0; }
-.brand-icon-text { font-size: 36rpx; }
-.brand-name { font-size: 30rpx; font-weight: bold; color: #1677ff; }
+.nav-brand { display: flex; align-items: center; flex-shrink: 0; }
+.brand-name { font-size: 24rpx; font-weight: bold; color: #1677ff; white-space: nowrap; }
 .nav-search-btn {
   flex: 1; display: flex; align-items: center;
   background: #f4f6f9; border-radius: 36rpx;
-  padding: 10rpx 24rpx; height: 52rpx;
+  padding: 10rpx 20rpx; height: 52rpx;
+  max-width: 280rpx;
 }
 .search-hint { font-size: 26rpx; color: #bbb; }
 

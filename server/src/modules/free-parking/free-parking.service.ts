@@ -106,4 +106,21 @@ export class FreeParkingService {
     )
     return { code: 0, message: '设置成功', data: { enabled } }
   }
+
+  // 更新位置信息
+  async updateLocation(id: number, data: { latitude: number, longitude: number, address?: string, name?: string }) {
+    const updateData: any = {
+      latitude: data.latitude,
+      longitude: data.longitude
+    }
+    if (data.address) {
+      updateData.address = data.address
+    }
+    if (data.name) {
+      updateData.name = data.name
+    }
+    
+    await this.freeParkingRepo.update(id, updateData)
+    return { code: 0, message: '位置和名称更新成功' }
+  }
 }

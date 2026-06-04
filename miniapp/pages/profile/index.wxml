@@ -3,7 +3,7 @@
   <view class="section">
     <view class="section-title">功能服务</view>
     <view class="menu-list">
-      <view class="menu-item" bindtap="goToReport">
+      <view wx:if="{{reportEnabled}}" class="menu-item" bindtap="goToReport">
         <text class="menu-icon">P</text>
         <text class="menu-label">免费停车点位上报</text>
         <text class="menu-arrow">›</text>

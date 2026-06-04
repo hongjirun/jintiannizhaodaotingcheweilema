@@ -37,11 +37,11 @@
       }
     ]
   },
+  "usingComponents": {},
   "permission": {
     "scope.userLocation": {
       "desc": "获取您的位置，用于查找附近停车场"
     }
   },
-  "requiredPrivateInfos": ["getLocation", "chooseLocation"],
-  "usingComponents": {}
+  "requiredPrivateInfos": ["getLocation", "chooseLocation"]
 }
