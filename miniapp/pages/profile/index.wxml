@@ -8,7 +8,7 @@
         <text class="menu-label">免费停车点位上报</text>
         <text class="menu-arrow">›</text>
       </view>
-      <view class="menu-item" bindtap="joinGroup">
+      <view wx:if="{{groupChatEnabled}}" class="menu-item" bindtap="joinGroup">
         <text class="menu-icon">G</text>
         <text class="menu-label">加入群聊</text>
         <text class="menu-arrow">›</text>

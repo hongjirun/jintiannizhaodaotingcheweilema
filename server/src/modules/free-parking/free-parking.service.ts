@@ -2,12 +2,15 @@ import { Injectable } from '@nestjs/common'
 import { InjectRepository } from '@nestjs/typeorm'
 import { Repository, DataSource } from 'typeorm'
 import { FreeParkingReport } from './free-parking.entity'
+import { SystemConfig } from './system-config.entity'
 
 @Injectable()
 export class FreeParkingService {
   constructor(
     @InjectRepository(FreeParkingReport)
     private readonly freeParkingRepo: Repository<FreeParkingReport>,
+    @InjectRepository(SystemConfig)
+    private readonly configRepo: Repository<SystemConfig>,
     private readonly dataSource: DataSource,
   ) {}
 
@@ -44,6 +47,25 @@ export class FreeParkingService {
         totalPages: Math.ceil(total / limit)
       }
     }
+  }
+
+  // 获取配置
+  async getConfig(key: string, defaultValue: string = '') {
+    const config = await this.configRepo.findOne({ where: { key } })
+    return { code: 0, data: { value: config?.value || defaultValue } }
+  }
+
+  // 设置配置
+  async setConfig(key: string, value: string, description?: string) {
+    let config = await this.configRepo.findOne({ where: { key } })
+    if (config) {
+      config.value = value
+      await this.configRepo.save(config)
+    } else {
+      config = this.configRepo.create({ key, value, description })
+      await this.configRepo.save(config)
+    }
+    return { code: 0, message: '设置成功' }
   }
 
   // 审核上报

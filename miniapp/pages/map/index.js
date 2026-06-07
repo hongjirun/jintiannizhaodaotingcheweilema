@@ -28,6 +28,24 @@ Page({
 
   onShow() {},
 
+  // 转发给朋友
+  onShareAppMessage() {
+    return {
+      title: '今天你找到停车位了吗？一键查找附近免费停车场',
+      path: '/pages/map/index',
+      imageUrl: '/static/share-cover.png'
+    }
+  },
+
+  // 分享到朋友圈
+  onShareTimeline() {
+    return {
+      title: '今天你找到停车位了吗？',
+      query: '',
+      imageUrl: '/static/share-cover.png'
+    }
+  },
+
   async _preloadAll() {
     try {
       const res = await parkingRequest.getAllLite()

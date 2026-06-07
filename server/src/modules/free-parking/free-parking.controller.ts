@@ -86,6 +86,26 @@ export class FreeParkingController {
     return this.freeParkingService.checkReportEnabled()
   }
 
+  // 小程序端：获取群聊功能显示状态
+  @Get('group-chat-status')
+  async getGroupChatStatus() {
+    return this.freeParkingService.getConfig('group_chat_enabled', 'false')
+  }
+
+  // 管理员端：获取群聊功能显示状态
+  @Get('admin/group-chat-status')
+  @UseGuards(JwtAuthGuard)
+  async getAdminGroupChatStatus() {
+    return this.freeParkingService.getConfig('group_chat_enabled', 'false')
+  }
+
+  // 管理员端：设置群聊功能显示状态
+  @Post('admin/group-chat-status')
+  @UseGuards(JwtAuthGuard)
+  async setGroupChatStatus(@Body() body: { enabled: boolean }) {
+    return this.freeParkingService.setConfig('group_chat_enabled', String(body.enabled), '控制群聊功能显示/隐藏')
+  }
+
   // 管理员端：更新位置信息
   @Post('admin/update-location/:id')
   @UseGuards(JwtAuthGuard)
